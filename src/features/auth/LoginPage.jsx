@@ -1,22 +1,13 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   loginWithEmail,
   registerWithEmail,
   loginWithGoogle,
-  sendOtpToPhone,
-  verifyPhoneOtp,
 } from "../../lib/auth";
 import "../../auth.css";
 
 function validateEmail(email) {
   return /.+@.+\..+/.test(email);
-}
-
-function normalizePhoneInput(phone) {
-  const trimmed = String(phone || "").trim();
-  if (!trimmed) return "";
-  if (trimmed.startsWith("+")) return "+" + trimmed.slice(1).replace(/\D/g, "");
-  return trimmed.replace(/\D/g, "");
 }
 
 export default function LoginPage() {
@@ -29,16 +20,6 @@ export default function LoginPage() {
   // Shared UI state
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-
-  // Choose login method: phone otp | google
-  const [loginMethod, setLoginMethod] = useState("phone"); // phone | google
-
-  // Phone OTP login state
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState("");
-  const [confirmationResult, setConfirmationResult] = useState(null);
-  const recaptchaElRef = useRef(null);
 
   const subtitle = useMemo(
     () =>
@@ -72,51 +53,6 @@ export default function LoginPage() {
       await loginWithGoogle();
     } catch (err) {
       setError(err?.message || "Google login failed.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleSendOtp() {
-    setError("");
-
-    const normalized = normalizePhoneInput(phoneNumber);
-    if (!normalized) return setError("Please enter a valid phone number.");
-
-    try {
-      setBusy(true);
-      setOtpSent(false);
-      setOtpCode("");
-      setConfirmationResult(null);
-
-      const el = recaptchaElRef.current;
-      const confirmation = await sendOtpToPhone(normalized, el);
-
-      setConfirmationResult(confirmation);
-      setOtpSent(true);
-      setError("");
-    } catch (err) {
-      setError(err?.message || "OTP send failed.");
-      setOtpSent(false);
-      setConfirmationResult(null);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleVerifyOtp(e) {
-    e?.preventDefault?.();
-    setError("");
-
-    if (!confirmationResult) return setError("OTP session missing.");
-    const code = String(otpCode || "").trim();
-    if (code.length < 4) return setError("Please enter the OTP code.");
-
-    try {
-      setBusy(true);
-      await verifyPhoneOtp(code, confirmationResult);
-    } catch (err) {
-      setError(err?.message || "OTP verification failed.");
     } finally {
       setBusy(false);
     }
@@ -170,113 +106,20 @@ export default function LoginPage() {
           </button>
         </div>
 
-        {/* Choose method (as per request) */}
+        {/* Login options */}
         <div className="auth-form" style={{ marginTop: 10 }}>
           <div className="auth-divider" style={{ margin: "6px 0 14px" }} />
-          <div
-            className="auth-mode"
-            style={{ justifyContent: "center", gap: 10 }}
+
+          <button
+            type="button"
+            className="auth-submit"
+            style={{ background: "#111827", marginTop: 0 }}
+            disabled={busy}
+            onClick={handleGoogle}
+            title="Continue with Google"
           >
-            <button
-              type="button"
-              className={
-                loginMethod === "phone"
-                  ? "auth-pill auth-pill--active"
-                  : "auth-pill"
-              }
-              onClick={() => {
-                setLoginMethod("phone");
-                setError("");
-              }}
-            >
-              📱 Mobile OTP
-            </button>
-            <button
-              type="button"
-              className={
-                loginMethod === "google"
-                  ? "auth-pill auth-pill--active"
-                  : "auth-pill"
-              }
-              onClick={() => {
-                setLoginMethod("google");
-                setError("");
-              }}
-            >
-              🔎 Google
-            </button>
-          </div>
-
-          {loginMethod === "google" ? (
-            <button
-              type="button"
-              className="auth-submit"
-              style={{ background: "#111827", marginTop: 14 }}
-              disabled={busy}
-              onClick={handleGoogle}
-              title="Continue with Google"
-            >
-              {busy ? "Please wait..." : "Continue with Google"}
-            </button>
-          ) : (
-            <>
-              <div className="auth-divider" style={{ margin: "14px 0" }} />
-              <div className="auth-label" style={{ marginBottom: 6 }}>
-                Mobile (OTP)
-              </div>
-
-              <label className="auth-label">
-                Phone number
-                <input
-                  className="auth-input"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  type="tel"
-                  inputMode="tel"
-                  placeholder="+91 9876543210"
-                  autoComplete="tel"
-                />
-              </label>
-
-              {otpSent ? (
-                <form onSubmit={handleVerifyOtp} style={{ marginTop: 10 }}>
-                  <label className="auth-label">
-                    OTP
-                    <input
-                      className="auth-input"
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="Enter OTP"
-                      autoComplete="one-time-code"
-                    />
-                  </label>
-
-                  <button className="auth-submit" type="submit" disabled={busy}>
-                    {busy ? "Verifying..." : "Verify OTP"}
-                  </button>
-                </form>
-              ) : (
-                <button
-                  className="auth-submit"
-                  type="button"
-                  style={{ marginTop: 10 }}
-                  disabled={busy}
-                  onClick={handleSendOtp}
-                >
-                  {busy ? "Sending OTP..." : "Send OTP"}
-                </button>
-              )}
-
-              {/* Recaptcha container (Firebase renders here) */}
-              <div
-                ref={recaptchaElRef}
-                style={{ marginTop: 10 }}
-                aria-hidden="true"
-              />
-            </>
-          )}
+            {busy ? "Please wait..." : "Continue with Google"}
+          </button>
 
           {error ? (
             <div className="auth-error" style={{ marginTop: 10 }}>
