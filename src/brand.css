@@ -1,0 +1,160 @@
+:root {
+  --brand-primary: #2563eb;
+  --brand-accent: #f59e0b;
+}
+
+.brand-slot {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 260px;
+  z-index: 9999;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 158, 11, 0.1),
+    rgba(37, 99, 235, 0.06)
+  );
+  z-index: 1;
+}
+
+.brand-card {
+  pointer-events: auto;
+  width: 100%;
+  padding: 18px 16px;
+  margin: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(229, 224, 213, 0.55);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-card::before {
+  content: "";
+  position: absolute;
+  inset: -60px;
+  background: radial-gradient(
+    circle at 30% 20%,
+    rgba(245, 158, 11, 0.45),
+    rgba(37, 99, 235, 0) 55%
+  );
+  transform: translate3d(0, 0, 0);
+}
+
+.brand-card::after {
+  content: "";
+  position: absolute;
+  left: -40%;
+  top: -30%;
+  width: 80%;
+  height: 160%;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  opacity: 0;
+  transform: rotate(14deg) translateX(-40%);
+  transition: opacity 0.25s ease;
+}
+
+.brand-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.65);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.brand-card:hover::after {
+  opacity: 1;
+}
+
+.brand-title {
+  position: relative;
+  font-weight: 900;
+  color: var(--brand-primary);
+  letter-spacing: 0.4px;
+  font-size: 20px;
+  text-align: left;
+  line-height: 1.15;
+  text-shadow: 0 8px 30px rgba(37, 99, 235, 0.12);
+}
+
+.brand-sub {
+  position: relative;
+  margin-top: 8px;
+  font-size: 13px;
+  color: rgba(26, 71, 42, 0.75);
+  font-weight: 600;
+  text-transform: none;
+}
+
+.brand-line {
+  position: relative;
+  margin-top: 14px;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(26, 71, 42, 0),
+    rgba(200, 168, 75, 0.9),
+    rgba(26, 71, 42, 0)
+  );
+}
+
+.brand-lamp {
+  position: absolute;
+  right: -40px;
+  bottom: -55px;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 35%,
+    rgba(200, 168, 75, 0.55),
+    rgba(200, 168, 75, 0) 62%
+  );
+  filter: blur(1px);
+  opacity: 0.9;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.brand-card:hover .brand-lamp {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+@media (max-width: 900px) {
+  .brand-slot {
+    display: none;
+  }
+}
+
+/* keep laptop view clean (avoid default body centering) */
+:global(body) {
+  display: block;
+}
+
+/* make sure slot shows and is not hidden by other styles */
+.brand-slot {
+  visibility: visible !important;
+  opacity: 1 !important;
+}

@@ -1,0 +1,221 @@
+.gl-feature-root {
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+.gl-topbar {
+  background: #1a472a;
+  padding: 16px 16px 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.gl-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.gl-subtitle {
+  font-size: 12px;
+  color: #a7c4a0;
+  margin-top: 2px;
+}
+.gl-topbar-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.gl-search {
+  flex: 1 1 220px;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  outline: none;
+}
+.gl-btn {
+  font-size: 13px;
+  padding: 0 16px;
+  height: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.gl-btn--ghost {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+.gl-btn--accent {
+  background: #c8a84b;
+  color: #1a1a1a;
+  border: none;
+}
+.gl-panel {
+  margin: 10px 0 14px;
+  border-radius: 12px;
+  padding: 14px;
+  border: 0.5px solid rgba(16, 185, 129, 0.35);
+  background: #ecfdf5;
+}
+.gl-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.gl-panel-title {
+  color: #065f46;
+  font-weight: 700;
+  font-size: 14px;
+}
+.gl-btn--panel-close {
+  font-size: 12px;
+  padding: 0 12px;
+  height: 30px;
+  background: transparent;
+  border: 0.5px solid rgba(16, 185, 129, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+  color: #065f46;
+}
+.gl-panel-empty {
+  color: #065f46;
+  font-size: 13px;
+}
+.gl-wapas-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  max-height: 55vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+.gl-wapas-card {
+  background: rgba(255, 255, 255, 0.7);
+  border: 0.5px solid rgba(16, 185, 129, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+}
+.gl-wapas-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.gl-wapas-name {
+  color: #1a472a;
+  font-weight: 800;
+  font-size: 14px;
+}
+.gl-wapas-meta {
+  font-size: 12px;
+  color: #6b7280;
+}
+.gl-wapas-updated {
+  font-size: 12px;
+  color: #065f46;
+}
+.gl-wapas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin-bottom: 8px;
+}
+.gl-wapas-label {
+  font-size: 10px;
+  color: #6b7280;
+}
+.gl-wapas-value {
+  font-size: 13px;
+  font-weight: 600;
+}
+.gl-wapas-saamaan {
+  background: #f7fee7;
+  border: 0.5px solid rgba(234, 179, 8, 0.25);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 0;
+  color: #92400e;
+  font-size: 13px;
+}
+.gl-wapas-notes {
+  color: #6b7280;
+  font-style: italic;
+  font-size: 12px;
+}
+.gl-empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: #6b7280;
+}
+.gl-empty-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+.gl-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a472a;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  animation: slideUp 0.2s ease;
+  z-index: 99;
+  white-space: nowrap;
+}
+.gl-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* ---- Modern-ish UI tweaks (UI only) ---- */
+.gl-customer-card {
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 16px;
+  padding: 14px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.gl-customer-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+/* slightly larger buttons inside cards */
+.gl-customer-card .gl-btn {
+  height: 32px;
+  border-radius: 10px;
+}
+
+/* unify HR spacing inside card */
+.gl-customer-card hr {
+  margin: 10px 0;
+  border-top-color: rgba(17, 24, 39, 0.14);
+}
+@media (max-width: 1000px) {
+  .gl-page {
+    margin-left: 0 !important;
+  }
+  .gl-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

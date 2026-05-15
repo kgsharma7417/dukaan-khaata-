@@ -1,0 +1,101 @@
+Create a premium, highly organized feature folder for customer billing & payment tracking.
+
+I want a ONE-folder structure named **JewelryInvoice** with exactly these files inside it:
+- **JewelryInvoice.jsx**
+- **InvoiceLogic.js**
+- **InvoiceStyles.css**
+
+No Tax.
+
+Use React (JS) and keep logic clean + commented so the flow Input → Math → Display is 100% clear.
+
+--------------------------------------------------------------------
+Requirements
+--------------------------------------------------------------------
+
+1) App Navigation / Entry Points
+- In the existing UI:
+  - Keep the **“Wapas hua”** label button on each “Wapas” view area.
+  - When user clicks **Wapas hua** (the button above Wapas details section),
+    open a **NEW PAGE** (route-like view state is fine) that shows the full “Customer Billing & Payment Tracker” UI.
+- The new page must include:
+  - Customer Details inputs
+  - Live receipt preview
+  - Payment & dues tracking
+  - Print receipt button
+
+2) Customer Details Section (Inputs)
+Provide inputs:
+- Customer Name (string)
+- Location / City / Address (string)
+- Date (date input)
+
+3) Calculation Flow (InvoiceLogic.js)
+Inputs coming from the UI:
+- weightInGrams (number)
+- today's gold rate (number)
+- makingChargesFlat (number)
+- discountAmount (number)
+- paidAmount (number)
+
+Compute exactly:
+- netGoldValue = weightInGrams * todayGoldRate
+- subTotal = netGoldValue + makingChargesFlat
+- finalTotal = subTotal - discountAmount
+- balanceAmount (dues) = finalTotal - paidAmount
+
+Rules:
+- Never allow negative finalTotal or negative balance (clamp to 0).
+- Use clearly named variables and add short comments for every step.
+
+4) Payment & Dues Tracker
+- Show paidAmount and balanceAmount clearly.
+- Status label:
+  - If balanceAmount === 0 → show “Fully Paid” in green
+  - Else → show “Remaining: ₹XXX” in red
+- Ensure Remaining updates live as user edits inputs.
+
+5) Premium UI/UX (InvoiceStyles.css)
+- Header text: “Krishna Gopal Sharma Jewellers”
+- Use a royal gold calligraphy-like feel:
+  - (If no special font is present, mimic with font-family fallbacks and styling)
+- Layout:
+  - Clean 2-column layout
+  - Left side: Inputs
+  - Right side: Live Receipt Preview
+- Background:
+  - subtle cream/off-white background
+  - gold accents: **#D4AF37**
+- Final Total and Balance must be highlighted in bold, easy-to-read boxes.
+
+6) Live Receipt Preview (Right Column)
+- Show a neat receipt-like design mirroring:
+  - Customer Name
+  - Location
+  - Date
+  - Weight, Gold Rate, Making Charges, Discount
+  - Final Total
+  - Paid Amount
+  - Balance Amount + status label
+- Include a “Print Receipt” button that prints EXACTLY what is shown.
+
+7) Print Feature
+- “Print Receipt” button must trigger print of the preview exactly as it looks.
+- Use browser print; ensure only the invoice area prints (hide other UI if needed via CSS @media print).
+
+8) Traceability Goal
+- Every variable must be clearly named (example: totalWeight, paidAmount, remainingBalance).
+- Add comments at each math step.
+- Keep files under 150 lines each where possible (split internal helpers in InvoiceLogic.js if needed).
+
+--------------------------------------------------------------------
+Output / Implementation Notes
+--------------------------------------------------------------------
+- Implement all UI inside **JewelryInvoice.jsx**.
+- Put ALL math in **InvoiceLogic.js**.
+- Put ALL styling in **InvoiceStyles.css**.
+- Do not include Tax.
+
+If anything conflicts with existing project routing/navigation, use the project’s current approach (state-based page switching is ok) but maintain the new page behavior.
+
+End.

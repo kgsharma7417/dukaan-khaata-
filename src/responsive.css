@@ -1,0 +1,95 @@
+:root {
+  --gl-border: rgba(229, 224, 213, 0.9);
+}
+
+/* Left/Right 5px borders (full height) */
+.gl-page {
+  border-left: 5px solid var(--gl-border);
+  border-right: 5px solid var(--gl-border);
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Mobile-first tweaks for GirviLedger */
+@media (max-width: 900px) {
+  /* Mobile pe side gap/branding area nahi chahiye */
+  .gl-page {
+    margin-left: 0 !important;
+    padding: 12px !important;
+  }
+}
+
+/* Customers cards grid */
+.gl-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Tablet: 3 cards per row */
+@media (max-width: 1200px) {
+  .gl-cards-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Smaller: 2 cards per row */
+@media (max-width: 900px) {
+  .gl-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .brand-slot {
+    display: none !important;
+  }
+
+  .gl-page {
+    padding: 12px !important;
+  }
+  .gl-header {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  .gl-header-title {
+    font-size: 18px !important;
+  }
+  .gl-search {
+    padding: 8px 10px !important;
+    font-size: 13px !important;
+  }
+  .gl-accent-btn {
+    padding: 0 12px !important;
+    height: 36px !important;
+    font-size: 12px !important;
+  }
+
+  .gl-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .gl-card {
+    border-radius: 12px !important;
+    padding: 12px !important;
+  }
+
+  .gl-meta-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px 10px !important;
+  }
+
+  .gl-actions {
+    flex-wrap: wrap !important;
+  }
+  .gl-action-btn {
+    width: auto !important;
+  }
+
+  .gl-total-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gl-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
