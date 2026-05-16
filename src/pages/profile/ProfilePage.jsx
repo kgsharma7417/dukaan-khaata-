@@ -4,11 +4,11 @@ import { STORAGE_KEY } from "../../lib/girviUtils.js";
 
 import ProfileHeader from "./components/ProfileHeader/ProfileHeader.jsx";
 
-import PersonalDetails from "../Profile/components/PersonalDetails/PersonalDetails.jsx";
-import AppSettings from "../Profile/components/AppSettings/AppSettings.jsx";
-import Support from "../Profile/components/Support/Support.jsx";
+import PersonalDetails from "./components/PersonalDetails/PersonalDetails.jsx";
+import AppSettings from "./components/AppSettings/AppSettings.jsx";
+import Support from "./components/Support/Support.jsx";
 
-import { LANG, STRINGS } from "../Profile/Profile.strings.js";
+import { LANG, STRINGS } from "./Profile.strings.js";
 
 const PROFILE_STORAGE_KEY = "dukkan_khaata_profile_v1";
 const AVATAR_STORAGE_KEY = "dukkan_khaata_profile_avatar_v1";
