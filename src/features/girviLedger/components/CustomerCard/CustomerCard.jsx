@@ -295,7 +295,7 @@ export default function CustomerCard({
   };
 
   const totalReceived = (c.paymentHistory || []).reduce(
-    (sum, x) => sum + (parseFloat(x.amount) || 0),
+    (sum, x) => sum + (Math.round(parseFloat(x.amount) * 100) / 100 || 0),
     0,
   );
   const _dueAmount = b ? Math.max(0, b.total - totalReceived) : 0;
@@ -319,7 +319,11 @@ export default function CustomerCard({
     },
     meta: {
       items: [
-        { label: "Raqam diya", value: (x) => rupees(parseFloat(x.raqam) || 0) },
+        {
+          label: "Raqam diya",
+          value: (x) =>
+            rupees(Math.round(parseFloat(x.raqam) * 100) / 100 || 0),
+        },
         {
           label: "Byaaj dar",
           value: (x) => (x.byaajDar ? `${x.byaajDar}% / maah` : "—"),
@@ -620,7 +624,8 @@ export default function CustomerCard({
               <Btn
                 onClick={() => {
                   const amountStr = prompt("Payment amount (₹)") || "";
-                  const amt = Math.round(parseFloat(amountStr) || 0);
+                  const amt =
+                    Math.round((parseFloat(amountStr) || 0) * 100) / 100;
                   if (!amt) return;
 
                   const dateInput = prompt("Payment date (YYYY-MM-DD)") || "";
@@ -709,7 +714,9 @@ export default function CustomerCard({
                     </div>
                     <div style={{ textAlign: "right" }}>
                       <div style={{ fontWeight: 900 }}>
-                        {rupees(h.amount || 0)}
+                        {rupees(
+                          Math.round(parseFloat(h.amount) * 100) / 100 || 0,
+                        )}
                       </div>
                       <div style={{ fontSize: 12, color: COLORS.muted }}>
                         {noteStr || "—"}

@@ -151,7 +151,7 @@ export default function ProfilePage({
     return `${a}${b}`.toUpperCase();
   }, [profile.shopkeeperName]);
 
-  function isWapasValue(v) {
+  function IS_WAPAS_VALUE_UNUSED(v) {
     if (typeof v === "boolean") return v;
     if (typeof v === "number") return v === 1;
     if (typeof v === "string") {

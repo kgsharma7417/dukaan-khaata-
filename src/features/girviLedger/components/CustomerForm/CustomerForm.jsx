@@ -55,10 +55,13 @@ export default function CustomerForm({ editId, customers, onSave, onCancel }) {
       return;
     }
 
+    const round2 = (v) => Math.round(parseFloat(v ?? 0) * 100) / 100;
+
     const obj = {
       id: editId || Date.now().toString(),
       ...form,
-      raqam: Math.round(parseFloat(form.raqam) || 0).toString(),
+      raqam: String(round2(form.raqam)),
+      byaajDar: String(round2(form.byaajDar)),
       wapas: editId ? existing?.wapas || false : false,
       updatedAt: new Date().toISOString(),
     };

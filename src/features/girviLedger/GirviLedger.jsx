@@ -23,7 +23,7 @@ export default function GirviLedger({
   onCustomersReady,
   onWapasCustomersReady,
   onGoCreateBill,
-  onGoFront,
+  // onGoFront intentionally unused in this component
 
   onDashboardStats,
 
@@ -173,7 +173,7 @@ export default function GirviLedger({
     const b = calcByaaj(cust.raqam, cust.byaajDar, cust.tarikh);
     const paymentHistory = cust.paymentHistory || [];
     const totalReceived = paymentHistory.reduce(
-      (sum, x) => sum + (parseFloat(x.amount) || 0),
+      (sum, x) => sum + (Math.round(parseFloat(x.amount) * 100) / 100 || 0),
       0,
     );
     const dueAmount = b ? Math.max(0, b.total - totalReceived) : 0;
@@ -251,7 +251,7 @@ export default function GirviLedger({
       if (!b) return acc;
 
       const totalReceived = (cust.paymentHistory || []).reduce(
-        (sum, x) => sum + (parseFloat(x.amount) || 0),
+        (sum, x) => sum + (Math.round(parseFloat(x.amount) * 100) / 100 || 0),
         0,
       );
 
@@ -446,7 +446,9 @@ export default function GirviLedger({
                         <div>
                           <div className="gl-wapas-label">Raqam</div>
                           <div className="gl-wapas-value">
-                            {rupees(parseFloat(c.raqam) || 0)}
+                            {rupees(
+                              Math.round(parseFloat(c.raqam) * 100) / 100 || 0,
+                            )}
                           </div>
                         </div>
                         <div>
@@ -511,7 +513,8 @@ export default function GirviLedger({
             {filtered.map((c) => {
               const b = calcByaaj(c.raqam, c.byaajDar, c.tarikh);
               const totalReceived = (c.paymentHistory || []).reduce(
-                (sum, x) => sum + (parseFloat(x.amount) || 0),
+                (sum, x) =>
+                  sum + (Math.round(parseFloat(x.amount) * 100) / 100 || 0),
                 0,
               );
               const dueAmount = b ? Math.max(0, b.total - totalReceived) : 0;
