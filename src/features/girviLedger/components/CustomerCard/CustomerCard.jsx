@@ -24,7 +24,15 @@ function Tag({ label, type = "green" }) {
   );
 }
 
-function Avatar({ name, imageUrl, onUpload, uploading, onPreview }) {
+function Avatar({
+  name,
+  imageUrl,
+  onUpload,
+  uploading,
+  onPreview,
+  placeholderIcon = "📷",
+  uploadTitle = "Upload image",
+}) {
   if (!imageUrl) {
     return (
       <label
@@ -42,7 +50,7 @@ function Avatar({ name, imageUrl, onUpload, uploading, onPreview }) {
             ? `2px dashed ${COLORS.accent}66`
             : `2px solid ${COLORS.accent}44`,
         }}
-        title={onUpload ? "Upload customer image" : undefined}
+        title={onUpload ? uploadTitle : undefined}
       >
         <div
           style={{
@@ -58,6 +66,24 @@ function Avatar({ name, imageUrl, onUpload, uploading, onPreview }) {
           }}
         >
           {initials(name)}
+
+          {/* Placeholder icon label (used when image missing) */}
+          {placeholderIcon ? (
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 18,
+                opacity: 0.0,
+                pointerEvents: "none",
+              }}
+            >
+              {placeholderIcon}
+            </div>
+          ) : null}
         </div>
 
         {onUpload ? (
@@ -371,13 +397,31 @@ export default function CustomerCard({
           marginBottom: 10,
         }}
       >
-        <Avatar
-          name={c.naam}
-          imageUrl={avatarImageUrl || ""}
-          onUpload={uploadHandler}
-          uploading={uploading}
-          onPreview={() => setPreviewOpen(true)}
-        />
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <Avatar
+            name={c.naam}
+            imageUrl={avatarImageUrl || ""}
+            onUpload={uploadHandler}
+            uploading={uploading}
+            onPreview={() => setPreviewOpen(true)}
+            placeholderIcon="📷"
+            uploadTitle="Upload customer photo"
+          />
+
+          {/* Saamaan collateral photo */}
+          <Avatar
+            name={c.naam}
+            imageUrl={c.saamaanPhoto || ""}
+            onUpload={null}
+            uploading={false}
+            onPreview={() => {
+              // Use same preview modal, but store saamaan photo in state
+              if (c.saamaanPhoto) setPreviewOpen(true);
+            }}
+            placeholderIcon="📦"
+            uploadTitle="Upload saamaan photo"
+          />
+        </div>
 
         <div style={{ flex: 1 }}>
           <div

@@ -45,9 +45,25 @@ export default function CustomerForm({ editId, customers, onSave, onCancel }) {
     byaajDar: existing?.byaajDar || "",
     saamaan: existing?.saamaan || "",
     notes: existing?.notes || "",
+
+    // Images
+    profilePhoto: existing?.profilePhoto || "",
+    saamaanPhoto: existing?.saamaanPhoto || "",
   });
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const setFile = (k) => (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      setForm((f) => ({ ...f, [k]: result }));
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = () => {
     if (!form.naam.trim() || !form.village.trim()) {
@@ -181,6 +197,143 @@ export default function CustomerForm({ editId, customers, onSave, onCancel }) {
             placeholder="Sona ki anguthi, chandi ki payal…"
           />
         </Field>
+      </div>
+
+      {/* Images (profile + collateral item) */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 10,
+          marginBottom: 12,
+        }}
+      >
+        {[
+          {
+            k: "profilePhoto",
+            icon: "📷",
+            label: "Profile",
+            val: form.profilePhoto,
+            hint: "Customer ki photo",
+          },
+          {
+            k: "saamaanPhoto",
+            icon: "📦",
+            label: "Saamaan",
+            val: form.saamaanPhoto,
+            hint: "Girvi rakhe hue saamaan ki photo",
+          },
+        ].map((x) => (
+          <div
+            key={x.k}
+            style={{
+              background: COLORS.bg,
+              border: `0.5px dashed ${COLORS.border}`,
+              borderRadius: 12,
+              padding: 10,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 10,
+                marginBottom: 8,
+              }}
+            >
+              <div
+                style={{ fontSize: 12, color: COLORS.muted, fontWeight: 700 }}
+              >
+                <span style={{ marginRight: 6 }}>{x.icon}</span>
+                {x.label}
+              </div>
+
+              <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                {x.val ? (
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, [x.k]: "" }))}
+                    style={{
+                      fontSize: 12,
+                      padding: "0 10px",
+                      height: 28,
+                      background: "transparent",
+                      border: `0.5px solid ${COLORS.border}`,
+                      borderRadius: 8,
+                      cursor: "pointer",
+                      color: "#111",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Remove
+                  </button>
+                ) : null}
+
+                <label
+                  style={{
+                    fontSize: 12,
+                    padding: "0 10px",
+                    height: 28,
+                    background: COLORS.primary,
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                  title="Upload image"
+                >
+                  Upload
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={setFile(x.k)}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div
+              style={{
+                width: "100%",
+                height: 140,
+                borderRadius: 10,
+                overflow: "hidden",
+                background: "rgba(255,255,255,0.35)",
+                border: `0.5px solid ${COLORS.border}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {x.val ? (
+                <img
+                  src={x.val}
+                  alt={x.label}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <div style={{ textAlign: "center", padding: 10 }}>
+                  <div style={{ fontSize: 22, marginBottom: 6 }}>{x.icon}</div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: COLORS.muted,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {x.hint}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div style={{ marginBottom: 12 }}>
