@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import FrontShim from "../../features/frontPage/FrontShim.jsx";
 import { STORAGE_KEY } from "../../lib/girviUtils.js";
 
-import ProfileHeader from "../Profile/components/ProfileHeader/ProfileHeader.jsx";
+import ProfileHeader from "./components/ProfileHeader/ProfileHeader.jsx";
+
 import PersonalDetails from "../Profile/components/PersonalDetails/PersonalDetails.jsx";
 import AppSettings from "../Profile/components/AppSettings/AppSettings.jsx";
 import Support from "../Profile/components/Support/Support.jsx";
