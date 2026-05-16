@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { calcByaaj, initials, rupees } from "../../../../lib/girviUtils.js";
 import { COLORS } from "../../constants/colors.js";
@@ -24,32 +24,26 @@ function Tag({ label, type = "green" }) {
   );
 }
 
-function Avatar({ name, imageUrl, onUpload, uploading }) {
-  return (
-    <label
-      style={{
-        width: 44,
-        height: 44,
-        borderRadius: "50%",
-        cursor: onUpload ? "pointer" : "default",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden",
-        flexShrink: 0,
-        border: onUpload
-          ? `2px dashed ${COLORS.accent}66`
-          : `2px solid ${COLORS.accent}44`,
-      }}
-      title={onUpload ? "Upload customer image" : undefined}
-    >
-      {imageUrl ? (
-        <img
-          src={imageUrl}
-          alt="Customer"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      ) : (
+function Avatar({ name, imageUrl, onUpload, uploading, onPreview }) {
+  if (!imageUrl) {
+    return (
+      <label
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: "50%",
+          cursor: onUpload ? "pointer" : "default",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          flexShrink: 0,
+          border: onUpload
+            ? `2px dashed ${COLORS.accent}66`
+            : `2px solid ${COLORS.accent}44`,
+        }}
+        title={onUpload ? "Upload customer image" : undefined}
+      >
         <div
           style={{
             width: "100%",
@@ -65,25 +59,107 @@ function Avatar({ name, imageUrl, onUpload, uploading }) {
         >
           {initials(name)}
         </div>
-      )}
+
+        {onUpload ? (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={onUpload}
+            style={{ display: "none" }}
+          />
+        ) : null}
+
+        {uploading ? (
+          <div
+            style={{
+              position: "absolute",
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 10,
+              fontWeight: 900,
+              color: "#111",
+            }}
+          >
+            …
+          </div>
+        ) : null}
+      </label>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        width: 44,
+        height: 44,
+        position: "relative",
+        borderRadius: "50%",
+        overflow: "hidden",
+        flexShrink: 0,
+      }}
+    >
+      <button
+        type="button"
+        onClick={onPreview}
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+          padding: 0,
+          margin: 0,
+          background: "transparent",
+          cursor: onPreview ? "pointer" : "default",
+        }}
+        title={onPreview ? "Open photo preview" : undefined}
+      >
+        <img
+          src={imageUrl}
+          alt="Customer"
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      </button>
 
       {onUpload ? (
-        <input
-          type="file"
-          accept="image/*"
-          onChange={onUpload}
-          style={{ display: "none" }}
-        />
+        <label
+          style={{
+            position: "absolute",
+            right: -4,
+            bottom: -4,
+            width: 26,
+            height: 26,
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.95)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: `1px solid ${COLORS.border}`,
+            cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+          }}
+          title="Change customer image"
+        >
+          <input
+            type="file"
+            accept="image/*"
+            onChange={onUpload}
+            style={{ display: "none" }}
+          />
+          <span style={{ fontSize: 12, lineHeight: 1 }}>📷</span>
+        </label>
       ) : null}
 
       {uploading ? (
         <div
           style={{
             position: "absolute",
-            width: 44,
-            height: 44,
+            inset: 0,
             borderRadius: "50%",
-            background: "rgba(255,255,255,0.6)",
+            background: "rgba(255,255,255,0.7)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -95,7 +171,7 @@ function Avatar({ name, imageUrl, onUpload, uploading }) {
           …
         </div>
       ) : null}
-    </label>
+    </div>
   );
 }
 
@@ -177,26 +253,26 @@ export default function CustomerCard({
   onToggleWapas,
   onReceivePayment,
   onWhatsApp,
-  // Bill button already removed; keep prop optional for backward compat
-  onBill,
+  _onBill,
 }) {
+  void _onBill;
   const b = calcByaaj(c.raqam, c.byaajDar, c.tarikh);
   const [confirmDel, setConfirmDel] = useState(false);
   const [showWapasInfo, setShowWapasInfo] = useState(false);
 
-  const [avatarImageUrl, setAvatarImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const storageKey = useMemo(() => getCustomerAvatarStorageKey(c.id), [c.id]);
 
-  useEffect(() => {
+  const [avatarImageUrl, setAvatarImageUrl] = useState(() => {
     try {
       const raw = window.localStorage?.getItem(storageKey);
-      setAvatarImageUrl(raw || "");
+      return raw || "";
     } catch {
-      setAvatarImageUrl("");
+      return "";
     }
-  }, [storageKey]);
+  });
 
   const uploadHandler = (e) => {
     const file = e.target.files?.[0];
@@ -232,9 +308,7 @@ export default function CustomerCard({
   };
 
   const wapasInfo = c.wapas
-    ? `✓ Wapas ho gaya • updated: ${new Date(c.updatedAt).toLocaleString(
-        "hi-IN",
-      )}`
+    ? `✓ Wapas ho gaya • updated: ${new Date(c.updatedAt).toLocaleString("hi-IN")}`
     : "";
 
   const CARD_PROPS = {
@@ -284,6 +358,7 @@ export default function CustomerCard({
         transition: "border-color 0.2s",
       }}
     >
+      {/* ── Header: Avatar + Name + Village ── */}
       <div
         style={{
           display: "flex",
@@ -297,6 +372,7 @@ export default function CustomerCard({
           imageUrl={avatarImageUrl || ""}
           onUpload={uploadHandler}
           uploading={uploading}
+          onPreview={() => setPreviewOpen(true)}
         />
 
         <div style={{ flex: 1 }}>
@@ -315,6 +391,64 @@ export default function CustomerCard({
         </div>
       </div>
 
+      {/* ── Full-screen image preview ── */}
+      {previewOpen && avatarImageUrl ? (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.75)",
+            zIndex: 30,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 20,
+          }}
+          onClick={() => setPreviewOpen(false)}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: 560,
+              borderRadius: 22,
+              overflow: "hidden",
+              background: "#fff",
+              boxShadow: "0 24px 80px rgba(0,0,0,0.2)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setPreviewOpen(false)}
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 12,
+                width: 36,
+                height: 36,
+                borderRadius: "50%",
+                border: "none",
+                background: "rgba(15, 23, 42, 0.9)",
+                color: "#fff",
+                cursor: "pointer",
+                fontSize: 18,
+                lineHeight: 1,
+                zIndex: 1,
+              }}
+            >
+              ×
+            </button>
+            <img
+              src={avatarImageUrl}
+              alt="Customer preview"
+              style={{ width: "100%", height: "auto", display: "block" }}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {/* ── Meta grid: raqam, byaaj dar, tarikh, mobile ── */}
       <div
         style={{
           display: "grid",
@@ -340,6 +474,7 @@ export default function CustomerCard({
         })}
       </div>
 
+      {/* ── Saamaan ── */}
       {c.saamaan && (
         <div
           style={{
@@ -358,6 +493,7 @@ export default function CustomerCard({
         </div>
       )}
 
+      {/* ── Notes ── */}
       {c.notes && (
         <div
           style={{
@@ -371,8 +507,10 @@ export default function CustomerCard({
         </div>
       )}
 
+      {/* ── Total box ── */}
       {b && !c.wapas && <TotalBox b={b} />}
 
+      {/* ── Due amount ── */}
       {!c.wapas && b && (
         <div
           style={{
@@ -400,6 +538,7 @@ export default function CustomerCard({
         </div>
       )}
 
+      {/* ── Status tags ── */}
       <div
         style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}
       >
@@ -419,6 +558,7 @@ export default function CustomerCard({
         }}
       />
 
+      {/* ── Action buttons ── */}
       {confirmDel ? (
         <div
           style={{
@@ -473,8 +613,6 @@ export default function CustomerCard({
         </div>
       ) : (
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          {/* Bill button removed as per request */}
-
           {!c.wapas && (
             <>
               <Btn onClick={() => onEdit?.(c.id)} icon="✏️" label="Edit" />
@@ -522,6 +660,7 @@ export default function CustomerCard({
         </div>
       )}
 
+      {/* ── Payment history panel ── */}
       {showWapasInfo && !c.wapas && (
         <div
           style={{

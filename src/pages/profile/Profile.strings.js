@@ -1,0 +1,101 @@
+export const LANG = {
+  EN: "en",
+  HI: "hi",
+};
+
+export const STRINGS = {
+  [LANG.EN]: {
+    pageTitle: "Profile",
+    heroBrand: "Dukaan Khaata",
+    girviShop: "Girvi Shop",
+    verified: "Verified",
+    settingsTitle: "App settings",
+    supportTitle: "Madad aur support",
+
+    personalTitle: "Dukaan ki jaankari",
+    edit: "Edit",
+    done: "Done",
+
+    malikNaam: "Owner name",
+    mobile: "Mobile number",
+    address: "Shop address",
+    gstOrLicense: "GST / License ipc number",
+    membershipJoinDate: "Membership Join Date",
+    email: "Email",
+    optional: "Optional",
+
+    defaultBayarDaarTitle: "Default bayar daar",
+    defaultBayarDaarSub: "Naye sirvi live",
+    reminderTitle: "Reminder notification",
+    reminderSub: "90+ din wale customers",
+    bhashaTitle: "Bhasha",
+    appLanguageSub: "App ki language",
+    dataBackupTitle: "Data backup",
+    dataBackupSub: "Firebase cloud pe save",
+    auto: "Auto",
+    chalu: "Chalu",
+
+    appHowToTitle: "App kaise use karein",
+    appHowToSub: "Step-by-step guide Hindi mein",
+    whatsappTitle: "WhatsApp pe poochho",
+    whatsappSub: "Developer se seedha baat karo",
+    suggestionTitle: "Sujhav do",
+    suggestionSub: "Naya feature chahiye? Batao",
+    developerTitle: "Developer ke baare mein",
+    developerSub: "App ki shuruaat",
+
+    labelActiveGirvi: "Active Girvi",
+    labelTotalBills: "Total Bills",
+    labelMembership: "Membership",
+
+    membershipSincePrefix: "Since",
+    upload: "Upload",
+  },
+  [LANG.HI]: {
+    pageTitle: "प्रोफाइल",
+    heroBrand: "दुकान खाता",
+    girviShop: "गिरवी शॉप",
+    verified: "वेरिफाइड",
+    settingsTitle: "ऐप सेटिंग्स",
+    supportTitle: "मदद और सपोर्ट",
+
+    personalTitle: "दुकान की जानकारी",
+    edit: "एडिट",
+    done: "डन",
+
+    malikNaam: "मालिक का नाम",
+    mobile: "मोबाइल नंबर",
+    address: "दुकान का पता",
+    gstOrLicense: "GST / लाइसेंस IPC नंबर",
+    membershipJoinDate: "मेंबरशिप जॉइन डेट",
+    email: "ईमेल",
+    optional: "Optional",
+
+    defaultBayarDaarTitle: "डिफॉल्ट बयार दार",
+    defaultBayarDaarSub: "नये सर्वी लाइव",
+    reminderTitle: "रिमाइंडर नोटिफिकेशन",
+    reminderSub: "90+ दिन वाले कस्टमर",
+    bhashaTitle: "भाषा",
+    appLanguageSub: "ऐप की भाषा",
+    dataBackupTitle: "डेटा बैकअप",
+    dataBackupSub: "Firebase क्लाउड पर सेव",
+    auto: "Auto",
+    chalu: "चालू",
+
+    appHowToTitle: "ऐप कैसे उपयोग करें",
+    appHowToSub: "स्टेप-बाय-स्टेप गाइड हिंदी में",
+    whatsappTitle: "WhatsApp पर पूछें",
+    whatsappSub: "डेवलपर से सीधे बात करें",
+    suggestionTitle: "सुझाव दें",
+    suggestionSub: "नया फीचर चाहिए? बताएं",
+    developerTitle: "डेवलपर के बारे में",
+    developerSub: "ऐप की शुरुआत",
+
+    labelActiveGirvi: "एक्टिव गिरवी",
+    labelTotalBills: "कुल बिल",
+    labelMembership: "मेंबरशिप",
+
+    membershipSincePrefix: "Since",
+    upload: "अपलोड",
+  },
+};

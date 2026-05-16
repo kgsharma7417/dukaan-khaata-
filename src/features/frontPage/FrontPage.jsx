@@ -34,72 +34,74 @@ export default function FrontPage({
   return (
     <div className="fp-root">
       <div className="container fp-wrap">
-        <div className="fp-topbar">
-          <div className="fp-pill">
-            <span className="fp-pill-icon" aria-hidden="true">
-              🏦
-            </span>
-            <span className="fp-pill-text">Dukaan Khaata</span>
-          </div>
-
-          <div className="fp-topbar-right" aria-hidden="true">
-            <div className="fp-dot" />
-            <div className="fp-dot fp-dot--solid" />
-          </div>
-
-          <button
-            type="button"
-            className="fp-logout-btn"
-            onClick={onLogout}
-            title="Logout"
-          >
-            Logout
-          </button>
-        </div>
-
-        <div className="fp-greeting">
-          <div className="fp-greet-emoji" aria-hidden="true">
-            🙏
-          </div>
-          <div className="fp-greet-text">
-            Namaste, {profileName || "Shopkeeper"}!
-          </div>
-        </div>
-
-        <div className="fp-hero">
-          <div className="fp-hero-title">Dukaan Khaata</div>
-          <div className="fp-hero-sub">
-            Aapka Girvi · Bill · Hisab — ek jagah
-          </div>
-        </div>
-
-        <div className="fp-tags" aria-hidden="true">
-          <div className="fp-tag">
-            <span>📘</span> Girvi
-          </div>
-          <div className="fp-tag">
-            <span>🧾</span> Bill
-          </div>
-          <div className="fp-tag">
-            <span>🗂️</span> Hisaab
-          </div>
-        </div>
-
-        <div className="fp-stats">
-          <div className="fp-stat">
-            <div className="fp-stat-icon" aria-hidden="true">
-              📄
+        <div className="fp-dashboard-header">
+          <div className="fp-dashboard-topbar">
+            <div className="fp-pill fp-pill--header">
+              <span className="fp-pill-icon" aria-hidden="true">
+                द
+              </span>
+              <span className="fp-pill-text">Dukaan Khaata</span>
             </div>
-            <div className="fp-stat-value">{activeGirviCount}</div>
-            <div className="fp-stat-label">Active Girvi</div>
+
+            <button
+              type="button"
+              className="fp-logout-btn fp-logout-btn--header"
+              onClick={onLogout}
+            >
+              Logout
+            </button>
           </div>
 
-          <div className="fp-stat fp-stat--accent">
-            <div className="fp-stat-icon" aria-hidden="true">
-              💎
+          <div className="fp-action-tabs">
+            <button
+              type="button"
+              className="fp-action-tab"
+              onClick={onNavGirvi}
+            >
+              Girvi
+            </button>
+            <button
+              type="button"
+              className="fp-action-tab fp-action-tab--active"
+              onClick={onGenerateBill}
+            >
+              Bill
+            </button>
+            <button
+              type="button"
+              className="fp-action-tab"
+              onClick={onNavReports}
+            >
+              Hisaab
+            </button>
+          </div>
+
+          <div className="fp-dashboard-greeting">
+            <div className="fp-dashboard-greeting-text">
+              Namaste, {profileName || "Shopkeeper"}!
             </div>
-            <div className="fp-stat-value">₹{totalOutstanding}</div>
-            <div className="fp-stat-label">Total Invested Amount</div>
+            <div className="fp-dashboard-title">Dukaan Khaata</div>
+            <div className="fp-dashboard-subtitle">
+              Aapka Girvi · Bill · Hisab — ek jagah
+            </div>
+          </div>
+
+          <div className="fp-stats">
+            <div className="fp-stat">
+              <div className="fp-stat-icon" aria-hidden="true">
+                📄
+              </div>
+              <div className="fp-stat-value">{activeGirviCount}</div>
+              <div className="fp-stat-label">Active Girvi</div>
+            </div>
+
+            <div className="fp-stat fp-stat--accent">
+              <div className="fp-stat-icon" aria-hidden="true">
+                💎
+              </div>
+              <div className="fp-stat-value">₹{totalOutstanding}</div>
+              <div className="fp-stat-label">Total Invested Amount</div>
+            </div>
           </div>
         </div>
 
@@ -179,7 +181,7 @@ export default function FrontPage({
           </button>
 
           <button type="button" className="fp-nav-item" onClick={onNavReports}>
-            Reports
+            Bhaav patr
           </button>
 
           <button type="button" className="fp-nav-item" onClick={onNavProfile}>

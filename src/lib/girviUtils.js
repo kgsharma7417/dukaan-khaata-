@@ -13,8 +13,9 @@ export function calcByaaj(raqam, byaajDar, tarikh) {
     0,
     Math.floor((Date.now() - new Date(tarikh)) / 86400000),
   );
-  const byaaj = Math.round((r * bd * (days / 30)) / 100);
-  return { days, raqam: r, byaaj, total: r + byaaj };
+  const chargedDays = Math.max(days, 30);
+  const byaaj = Math.round((r * bd * (chargedDays / 30)) / 100);
+  return { days, chargedDays, raqam: r, byaaj, total: r + byaaj };
 }
 
 export function initials(name) {

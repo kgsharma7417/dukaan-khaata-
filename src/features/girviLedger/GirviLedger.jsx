@@ -396,15 +396,6 @@ export default function GirviLedger({
             >
               + Create Bill
             </button>
-
-            <button
-              onClick={() => onGoFront?.()}
-              className="gl-btn gl-btn--ghost"
-              style={{ borderStyle: "dashed" }}
-              title="Go to Front Page"
-            >
-              🏠 Front Page
-            </button>
           </div>
         </div>
       </div>

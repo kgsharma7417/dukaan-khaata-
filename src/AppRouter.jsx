@@ -5,13 +5,28 @@ import GirviLedger from "./features/girviLedger/GirviLedger.jsx";
 import WapasPage from "./features/wapas/WapasPage.jsx";
 import CreateBillPage from "./features/girviLedger/CreateBillPage.jsx";
 import FrontPage from "./features/frontPage/FrontPage.jsx";
-import ReportsPage from "./pages/ReportsPage.jsx";
-import ProfilePage from "./pages/ProfilePage.jsx";
-import BillsPage from "./pages/BillsPage.jsx";
+import BhaavPatrPage from "./pages/BhaavPatrPage.jsx";
+import ProfilePage from "./pages/profile/ProfilePage.jsx";
+import AboutDeveloperPage from "./pages/AboutDeveloperPage.jsx";
+import BillsPage from "./pages/bills/BillsPage.jsx";
 import { logout } from "./lib/auth";
 
+function getInitialPageFromPathname(pathname) {
+  const p = String(pathname ?? "");
+  if (p === "/profile" || p.endsWith("/profile")) return "profile";
+  if (p === "/reports" || p.endsWith("/reports")) return "reports";
+  if (p === "/bills" || p.endsWith("/bills")) return "bills";
+  if (p === "/wapas" || p.endsWith("/wapas")) return "wapas";
+  if (p === "/aboutDeveloper" || p.endsWith("/aboutDeveloper"))
+    return "aboutDeveloper";
+  if (p === "/createBill" || p.endsWith("/createBill")) return "createBill";
+  return "front";
+}
+
 export default function AppRouter() {
-  const [page, setPage] = useState("front"); // front | ledger | wapas | createBill | reports | profile
+  const [page, setPage] = useState(() =>
+    getInitialPageFromPathname(window.location?.pathname),
+  ); // front | ledger | wapas | createBill | reports | profile | aboutDeveloper
 
   const [customers, setCustomers] = useState([]);
   const [openCreateAccount, setOpenCreateAccount] = useState(false);
@@ -23,6 +38,7 @@ export default function AppRouter() {
   const onGoReports = useCallback(() => setPage("reports"), []);
   const onGoProfile = useCallback(() => setPage("profile"), []);
   const onGoWapas = useCallback(() => setPage("wapas"), []);
+  const onGoAboutDeveloper = useCallback(() => setPage("aboutDeveloper"), []);
 
   const onLogout = useCallback(async () => {
     try {
@@ -88,7 +104,7 @@ export default function AppRouter() {
 
   if (page === "reports") {
     return (
-      <ReportsPage
+      <BhaavPatrPage
         onNavHome={onGoFront}
         onNavGirvi={onGoLedger}
         onNavBills={onGoBills}
@@ -101,6 +117,19 @@ export default function AppRouter() {
   if (page === "profile") {
     return (
       <ProfilePage
+        onNavHome={onGoFront}
+        onNavGirvi={onGoLedger}
+        onNavBills={onGoBills}
+        onNavReports={onGoReports}
+        onNavProfile={onGoProfile}
+        onAboutDeveloper={onGoAboutDeveloper}
+      />
+    );
+  }
+
+  if (page === "aboutDeveloper") {
+    return (
+      <AboutDeveloperPage
         onNavHome={onGoFront}
         onNavGirvi={onGoLedger}
         onNavBills={onGoBills}

@@ -26,7 +26,6 @@ const db = getFirestore(app);
 let analytics = null;
 if (typeof window !== "undefined") {
   // Lazy import so the build environment doesn't evaluate firebase/analytics
-  // eslint-disable-next-line no-undef
   import("firebase/analytics").then(({ getAnalytics }) => {
     analytics = getAnalytics(app);
   });

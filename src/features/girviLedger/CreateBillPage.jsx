@@ -13,6 +13,14 @@ function buildBillHtml({ customer, bill }) {
   const safeMobile = customer?.mobile || "—";
   const safeDateStr = customer?.dateStr || "—";
 
+  // Jama (Paid) / Remaining
+  const computedPaid = toNumberOrZero(bill?.paidAmount);
+
+  const computedRemaining = Math.max(
+    0,
+    toNumberOrZero(bill?.grandTotal) - computedPaid,
+  );
+
   const rows = (bill?.items || [])
     .filter((p) => String(p.itemDescription || "").trim().length > 0)
     .map((p, idx) => {
@@ -74,11 +82,11 @@ function buildBillHtml({ customer, bill }) {
   <body>
     <div class="wrap">
       <div class="top">
-        <div class="brand">Krishna Gopal Jewellers</div>
         <div class="sub">Jewellery / Bill (Generated)</div>
-        <div class="title">TAX INVOICE / CASH BILL</div>
+        <div class="title">BILL</div>
 
         <div class="grid2">
+
           <div class="box"><div class="k">Customer</div><div class="v">${safeName}</div></div>
           <div class="box"><div class="k">Date</div><div class="v">${safeDateStr}</div></div>
           <div class="box"><div class="k">Address (Village)</div><div class="v">${safeVillage}</div></div>
@@ -105,10 +113,16 @@ function buildBillHtml({ customer, bill }) {
 
       <div class="totals">
         <div class="row"><span style="font-weight:900;">Sub Total</span><span style="font-weight:900;">₹ ${subtotal.toFixed(2)}</span></div>
-        <div class="row"><span style="font-weight:900;">Making / Banani</span><span style="font-weight:900;">₹ ${totalMaking.toFixed(2)}</span></div>
+        <div class="row"><span style="font-weight:900;">Making / Majduri</span><span style="font-weight:900;">₹ ${totalMaking.toFixed(2)}</span></div>
         <div class="grand">
           <div class="label">Grand Total</div>
           <div class="amount">₹ ${grandTotal.toFixed(2)}</div>
+        </div>
+
+        <!-- New: Payment split (jamaa vs remaining) -->
+        <div style="margin-top:10px; padding-top:10px; border-top: 1px dashed rgba(229,231,235,1);">
+          <div class="row"><span style="font-weight:900;">Jamaa (Paid)</span><span style="font-weight:900;">₹ ${computedPaid.toFixed(2)}</span></div>
+          <div class="row"><span style="font-weight:900;">Remaining (Baki)</span><span style="font-weight:900;">₹ ${computedRemaining.toFixed(2)}</span></div>
         </div>
       </div>
 
@@ -148,14 +162,14 @@ function FieldCard({ label, children }) {
 
 export default function CreateBillPage({
   onBack,
-  onGoFront,
-
   onNavHome,
   onNavGirvi,
   onNavBills,
   onNavReports,
   onNavProfile,
 }) {
+  const [jamaInput, setJamaInput] = useState("0");
+
   const [customer, setCustomer] = useState({
     name: "",
     mobile: "",
@@ -185,9 +199,11 @@ export default function CreateBillPage({
     const normalized = (items || []).map((it) => {
       const weight = toNumberOrZero(it.weight);
       const ratePerG = toNumberOrZero(it.ratePerG);
-      // Purity ko hata diya: always 100%
+
+      // Purity ko hata diya: always treat as 100%
       const purityPercent = 100;
       const purityLabel = "100%";
+
       const netRate = ratePerG * (purityPercent / 100);
       const itemBase = weight * netRate;
 
@@ -233,6 +249,9 @@ export default function CreateBillPage({
       validItems,
     };
   }, [items]);
+
+  const paidAmount = toNumberOrZero(jamaInput);
+  const remainingBalance = Math.max(0, computed.grandTotal - paidAmount);
 
   const canGenerate =
     String(customer.name || "").trim().length > 0 &&
@@ -294,7 +313,9 @@ export default function CreateBillPage({
         subtotal: computed.subtotal,
         totalMaking: computed.totalMaking,
         grandTotal: computed.grandTotal,
+        paidAmount: paidAmount,
       },
+      paidAmount,
       previewHtml,
     };
 
@@ -311,6 +332,11 @@ export default function CreateBillPage({
 
   const handleViewSavedBill = (billDoc) => {
     setCustomer({ ...(billDoc.customer || {}) });
+
+    setJamaInput(
+      String(billDoc.paidAmount ?? billDoc?.totals?.paidAmount ?? 0),
+    );
+
     // restore UI items snapshot
     setItems((prev) => {
       const restoredItems = (billDoc.itemsSnapshot || []).map((x) => ({
@@ -390,6 +416,7 @@ export default function CreateBillPage({
       subtotal: computed.subtotal,
       totalMaking: computed.totalMaking,
       grandTotal: computed.grandTotal,
+      paidAmount,
     };
 
     const html = buildBillHtml({
@@ -422,11 +449,6 @@ export default function CreateBillPage({
     color: "#111",
   };
 
-  const selectStyle = {
-    ...inputStyle,
-    height: 44,
-  };
-
   const textStyle = {
     width: "100%",
     minHeight: 44,
@@ -439,6 +461,34 @@ export default function CreateBillPage({
     color: "#111",
   };
 
+  const pageCardStyle = {
+    borderRadius: 26,
+    background: "#ffffff",
+    border: "1px solid rgba(17,24,39,0.08)",
+    boxShadow: "0 24px 60px rgba(15,23,42,0.08)",
+    padding: 16,
+    marginBottom: 18,
+  };
+
+  const sectionCardStyle = {
+    borderRadius: 24,
+    background: "rgba(255,255,255,0.96)",
+    border: "1px solid rgba(17,24,39,0.10)",
+    boxShadow: "0 18px 36px rgba(15,23,42,0.05)",
+    padding: 16,
+  };
+
+  const pillButtonStyle = {
+    minWidth: 84,
+    borderRadius: 999,
+    border: "1px solid rgba(17,24,39,0.12)",
+    background: "rgba(255,255,255,0.98)",
+    color: "#111",
+    fontWeight: 900,
+    padding: "10px 14px",
+    cursor: "pointer",
+  };
+
   return (
     <div
       style={{
@@ -448,74 +498,91 @@ export default function CreateBillPage({
         paddingBottom: 120,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          marginBottom: 14,
-          flexWrap: "wrap",
-        }}
-      >
-        <button
-          onClick={onBack}
-          className="gl-btn gl-btn--ghost"
-          style={{ height: 34 }}
-        >
-          ← Back
-        </button>
-
-        <div style={{ color: COLORS.primary, fontWeight: 1000, fontSize: 18 }}>
-          + Bill Banáo
-        </div>
-
-        <button
-          onClick={() => onGoFront?.()}
-          className="gl-btn gl-btn--ghost"
-          style={{ height: 34, borderStyle: "dashed" }}
-          title="Go to Front Page"
-        >
-          🏠 Front Page
-        </button>
-
-        <div style={{ color: COLORS.muted, fontSize: 12 }}>
-          Customer + Products + Banani + Summary
-        </div>
-
-        <button
-          type="button"
-          className="gl-btn gl-btn--ghost"
-          style={{ height: 34, borderStyle: "dashed" }}
-          onClick={() => {
-            setBillsTabOpen((v) => {
-              const next = !v;
-              if (next) {
-                setTimeout(() => {
-                  billsPanelRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                  });
-                }, 0);
-              }
-              return next;
-            });
+      <div style={pageCardStyle}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            flexWrap: "wrap",
+            justifyContent: "space-between",
           }}
-          title="Saved bills"
         >
-          🧾 Bills
-        </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <button
+              onClick={onBack}
+              className="gl-btn gl-btn--ghost"
+              style={{ height: 36, minWidth: 88, borderRadius: 18 }}
+            >
+              ← Back
+            </button>
+
+            <div
+              style={{ color: COLORS.primary, fontWeight: 1000, fontSize: 18 }}
+            >
+              Bill Banaó
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setBillsTabOpen(true);
+              setShowPreview(false);
+              setTimeout(() => {
+                billsPanelRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+              }, 0);
+            }}
+            className="gl-btn gl-btn--ghost"
+            style={{
+              height: 36,
+              borderStyle: "dashed",
+              borderColor: "rgba(59,130,246,0.4)",
+              background: "rgba(219,234,254,0.9)",
+              color: "#1d4ed8",
+              borderRadius: 999,
+              minWidth: 140,
+            }}
+            title="See all saved bills"
+          >
+            See all bills
+          </button>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+            marginTop: 12,
+            color: COLORS.muted,
+            fontSize: 12,
+          }}
+        >
+          <span>Customer · Products · Majduri · Summary</span>
+          <span>•</span>
+          <span style={{ fontWeight: 900 }}>Bills</span>
+        </div>
       </div>
 
       <div style={{ maxWidth: 980, margin: "0 auto" }}>
         {/* Customer section */}
-        <div style={{ marginBottom: 14 }}>
+        <div style={{ marginBottom: 18, ...sectionCardStyle }}>
           <div
-            style={{ fontWeight: 1000, color: COLORS.primary, marginBottom: 8 }}
+            style={{
+              fontWeight: 1000,
+              color: COLORS.primary,
+              marginBottom: 12,
+              fontSize: 16,
+            }}
           >
             🧾 Customer ki Jankari
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
             <div
               style={{
                 display: "grid",
@@ -657,7 +724,6 @@ export default function CreateBillPage({
                     </button>
                   </div>
 
-                  {/* Product name + type */}
                   <div
                     style={{
                       display: "grid",
@@ -680,23 +746,43 @@ export default function CreateBillPage({
                     </FieldCard>
 
                     <FieldCard label="Type">
-                      <select
-                        style={selectStyle}
-                        value={p.productType || "Gold"}
-                        onChange={(e) =>
-                          handleItemPatch(idx, { productType: e.target.value })
-                        }
+                      <div
+                        style={{ display: "flex", gap: 10, flexWrap: "wrap" }}
                       >
-                        <option value="Gold">Gold</option>
-                        <option value="Silver">Silver</option>
-                        <option value="Other">Other</option>
-                      </select>
+                        {[
+                          { value: "Gold", label: "Gold" },
+                          { value: "Silver", label: "Silver" },
+                          { value: "Other", label: "Other" },
+                        ].map((option) => {
+                          const isActive = p.productType === option.value;
+                          return (
+                            <button
+                              key={option.value}
+                              type="button"
+                              onClick={() =>
+                                handleItemPatch(idx, {
+                                  productType: option.value,
+                                })
+                              }
+                              style={{
+                                ...pillButtonStyle,
+                                borderColor: isActive
+                                  ? "rgba(249,115,22,0.9)"
+                                  : "rgba(17,24,39,0.12)",
+                                background: isActive
+                                  ? "rgba(249,115,22,0.15)"
+                                  : "rgba(255,255,255,0.96)",
+                                color: isActive ? "#b45309" : "#111",
+                              }}
+                            >
+                              {option.label}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </FieldCard>
                   </div>
 
-                  {/* Purity UI removed */}
-
-                  {/* Weight + rate */}
                   <div
                     style={{
                       display: "grid",
@@ -730,7 +816,6 @@ export default function CreateBillPage({
                     </FieldCard>
                   </div>
 
-                  {/* Making charge */}
                   <div style={{ marginTop: 14 }}>
                     <div
                       style={{
@@ -740,7 +825,7 @@ export default function CreateBillPage({
                         marginBottom: 8,
                       }}
                     >
-                      Banani / Making Charge
+                      Majduri / Making Charge
                     </div>
 
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -798,7 +883,7 @@ export default function CreateBillPage({
                           marginTop: 10,
                         }}
                       >
-                        <FieldCard label="Banani Rate (₹/g)">
+                        <FieldCard label="Majduri Rate (₹/g)">
                           <input
                             style={inputStyle}
                             value={p.bananiRate}
@@ -812,7 +897,7 @@ export default function CreateBillPage({
                           />
                         </FieldCard>
 
-                        <FieldCard label="Total Banani">
+                        <FieldCard label="Total Majduri">
                           <div style={{ fontSize: 20, fontWeight: 1000 }}>
                             {rupees(makingTotal)}
                           </div>
@@ -844,7 +929,6 @@ export default function CreateBillPage({
                     )}
                   </div>
 
-                  {/* Product total */}
                   <div style={{ marginTop: 14 }}>
                     <div
                       style={{
@@ -895,9 +979,7 @@ export default function CreateBillPage({
                           <span style={{ color: COLORS.primary }}>
                             ₹{" "}
                             {(
-                              weight *
-                              ratePerG *
-                              (purityPercent / 100)
+                              weight * ratePerG * (purityPercent / 100) || 0
                             ).toFixed(0)}
                           </span>
                         </div>
@@ -907,7 +989,7 @@ export default function CreateBillPage({
                             justifyContent: "space-between",
                           }}
                         >
-                          <span>Banani</span>
+                          <span>Majduri</span>
                           <span style={{ color: COLORS.primary }}>
                             ₹ {makingTotal.toFixed(0)}
                           </span>
@@ -956,7 +1038,9 @@ export default function CreateBillPage({
                         fontWeight: 850,
                       }}
                     >
-                      {p.makingMode === "fixed" ? "Fixed banani" : "Banani ₹/g"}
+                      {p.makingMode === "fixed"
+                        ? "Fixed Majduri"
+                        : "Majduri ₹/g"}
                     </div>
                   </div>
                 </div>
@@ -984,7 +1068,45 @@ export default function CreateBillPage({
         {/* Bill total + actions */}
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}>
-            <FieldCard label="Kul Raqam (Sub Total + Banani)">
+            {/* New: Jama / Advance Payment */}
+            <FieldCard label="Jama Raqam (Paid Amount)">
+              <input
+                style={inputStyle}
+                value={jamaInput}
+                onChange={(e) => setJamaInput(e.target.value)}
+                placeholder="e.g. 10000"
+                type="number"
+                inputMode="decimal"
+                min={0}
+              />
+
+              <div
+                style={{
+                  marginTop: 8,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 10,
+                  fontSize: 12,
+                  color: COLORS.muted,
+                  fontWeight: 900,
+                }}
+              >
+                <span>
+                  Kul Raqam:{" "}
+                  <span style={{ color: COLORS.primary }}>
+                    ₹ {computed.grandTotal.toFixed(0)}
+                  </span>
+                </span>
+                <span>
+                  Baki:{" "}
+                  <span style={{ color: COLORS.primary }}>
+                    ₹ {remainingBalance.toFixed(0)}
+                  </span>
+                </span>
+              </div>
+            </FieldCard>
+
+            <FieldCard label="Kul Raqam (Sub Total + Majduri)">
               <div
                 style={{
                   display: "flex",
@@ -1037,7 +1159,7 @@ export default function CreateBillPage({
                   fontSize: 12,
                 }}
               >
-                <div>Banani</div>
+                <div>Majduri</div>
                 <div>₹ {computed.totalMaking.toFixed(2)}</div>
               </div>
             </FieldCard>
@@ -1075,6 +1197,7 @@ export default function CreateBillPage({
                       makingChargeTotal: 0,
                     },
                   ]);
+                  setJamaInput("0");
                   setPreviewHtml("");
                   setShowPreview(false);
                 }}
@@ -1131,9 +1254,9 @@ export default function CreateBillPage({
                 style={{
                   height: 36,
                   borderStyle: "dashed",
-                  borderColor: "rgba(17,24,39,0.45)",
+                  borderColor: "rgba(17,24,39,0.50)",
                   color: "#111",
-                  background: "rgba(255,255,255,0.95)",
+                  background: "rgba(255,255,255,0.98)",
                 }}
                 onClick={() => {
                   if (!previewHtml) {
@@ -1191,7 +1314,13 @@ export default function CreateBillPage({
                       <button
                         type="button"
                         className="gl-btn gl-btn--ghost"
-                        style={{ height: 36, borderStyle: "dashed" }}
+                        style={{
+                          height: 36,
+                          borderStyle: "dashed",
+                          borderColor: "rgba(17,24,39,0.45)",
+                          color: "#111",
+                          background: "rgba(255,255,255,0.98)",
+                        }}
                         onClick={() => handleViewSavedBill(b)}
                       >
                         Open
@@ -1204,6 +1333,8 @@ export default function CreateBillPage({
                           height: 36,
                           borderStyle: "dashed",
                           borderColor: "rgba(239,68,68,0.55)",
+                          color: "#111",
+                          background: "rgba(255,255,255,0.98)",
                         }}
                         onClick={() => handleDeleteSavedBill(b.id)}
                         title="Delete bill"
@@ -1241,13 +1372,32 @@ export default function CreateBillPage({
               <div style={{ fontWeight: 950, color: COLORS.primary }}>
                 🧾 Bill Preview
               </div>
-              <button
-                onClick={handlePrint}
-                className="gl-btn gl-btn--accent"
-                style={{ height: 36 }}
-              >
-                Print
-              </button>
+
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <button
+                  onClick={() => {
+                    handleSaveCurrentBill();
+                    setBillsTabOpen(true);
+                  }}
+                  className="gl-btn gl-btn--ghost"
+                  style={{
+                    height: 36,
+                    borderStyle: "dashed",
+                    borderColor: "rgba(16,185,129,0.55)",
+                    background: "rgba(220,253,231,0.75)",
+                  }}
+                >
+                  Save bill
+                </button>
+
+                <button
+                  onClick={handlePrint}
+                  className="gl-btn gl-btn--accent"
+                  style={{ height: 36 }}
+                >
+                  Print
+                </button>
+              </div>
             </div>
 
             <iframe

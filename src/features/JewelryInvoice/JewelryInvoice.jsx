@@ -52,7 +52,6 @@ export default function JewelryInvoice() {
       <div className="ji-shell">
         <div className="ji-header">
           <div>
-            <div className="ji-title">Krishna Gopal Sharma Jewellers</div>
             <div className="ji-subtitle">
               Customer Billing & Payment Tracker
             </div>
